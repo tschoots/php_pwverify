@@ -6,10 +6,32 @@
 var_dump($_POST);
 echo "<br><br>";
 
-//$link = mysqli_connect('mysql', 'root', 'example');
-//if (!$link){
-//   echo 'could not connect: ' . mysql_error();
-//}
+$link = mysqli_connect('mysql', 'root', 'example');
+if (!$link){
+   echo 'could not connect: ' . mysql_error();
+}
+
+// see if db is there otherwise create one
+$db_selected = mysqli_select_db( $link, 'my_db');
+if (!$db_selected){
+   // db not there create
+   $sql = 'CREATE DATABASE my_db';
+   if (mysqli_query($link, $sql)){
+      echo "<br><br>Database my_db created successfully<br><br>";
+   } else {
+      echo '<br><br>Error creating database: ' . mysqli_error();
+   }
+}
+
+
+// now see to it the table exist
+$query = 'SELECT ID FROM USERS';
+$result = mysqli_query($link, $query);
+if (empty($result)){
+   $query = "CREATE TABLE USERS (
+                ID int(11) AUTO_INCREMENT,
+             )";
+}
 
 $control = $_POST["control"];
 if ($control == "verify"){
@@ -32,6 +54,9 @@ if (password_verify($_POST["password"], $hash)) {
 } else {
     echo 'Invalid password.';
 }
+
+
+mysqli_close($link)
 ?>
 
 <form action="index.php" method="post">
