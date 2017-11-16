@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+
+  phpapache:
+    build: ./php
+    #image: php:7.0-apache
+    container_name: phpapache
+    ports:
+      - 8080:80
+    environment:
+      PHP_DB_PASSWORD: example
+    volumes:
+    - ./web:/var/www/html
+
+  mysql:
+    #image: mysql:5.7
+    #image: mysql:8
+    image: hypriot/rpi-mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+
+  phpmyadmin:
+    #image: phpmyadmin/phpmyadmin
+    image: easypi/phpmyadmin-arm
+    container_name: phpmyadmin
+    environment:
+     - PMA_ARBITRARY=1
+     - PMA_USER=root
+     - PMA_PASSWORD=example
+     - PMA_HOST=mysql
+    restart: always
+    ports:
+     - 8081:80
+    volumes:
+     - /sessions
